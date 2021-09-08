@@ -1,0 +1,6 @@
+[submodule "market24-frontend"]
+	path = market24-frontend
+	url = https://github.com/Nikitos-SOS/market24-frontend
+[submodule "market24-backend"]
+	path = market24-backend
+	url = https://github.com/Nikitos-SOS/market24-backend
