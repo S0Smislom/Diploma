@@ -1,0 +1,7 @@
+/* You can add global styles to this file, and also import other style files */
+body{
+  align-items: center;
+  /* text-align: center; */
+  max-width: 1200px;
+  margin: auto;
+}

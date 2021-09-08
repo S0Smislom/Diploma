@@ -1,0 +1,308 @@
+<div class="container" *ngIf="roleSeller()">
+  <div class="user_info_container col-lg-6 col-md-9 col-sm-12"  >
+    <div class="user_info">
+      <h3 class="userInfoTitle">Личная информация:</h3>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">Логин*: {{seller.username}}</li>
+        <li class="list-group-item">Название компании: {{seller.name}}</li>
+        <li class="list-group-item">ИНН*: {{seller.inn}}</li>
+        <li class="list-group-item" >Описание компании: {{seller.description}}</li>
+        <li class="list-group-item">Контактная информация: {{seller.contactInfo}}</li>
+      </ul>
+      <div class="d-grid gap-1" >
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#updateSellerModal" >Редактировать</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#changePasswordModal" >Изменить пароль</button>
+
+      </div>
+
+    </div>
+  </div>
+
+  <div class="product_container col-12">
+    <div class="product_container_inner">
+      <h3 class="product_title">
+        Список товаров:
+
+      </h3>
+      <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addProductModal">
+        Добавить
+      </button>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">id</th>
+          <th scope="col">Name</th>
+          <th scope="col">Count</th>
+          <th scope="col">Price</th>
+          <th scope="col">ImgUrl</th>
+          <th scope="col">Description</th>
+          <th scope="col">Rating</th>
+          <th scope="col">City</th>
+          <th scope="col">Region</th>
+          <th scope="col">Control</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products; index as i; first as isFirst">
+          <th scope="row">{{product.id}}</th>
+          <td>{{product.name}}</td>
+          <td>{{product.count}}</td>
+          <td>{{product.price}}</td>
+          <td>
+            <textarea class="form-control" disabled  id="floatingTextarea2" style="height: 100px">
+              {{product.imgUrl}}
+            </textarea>
+          </td>
+          <td>
+            <div class="form-floating">
+              <textarea class="form-control" disabled placeholder="Leave a description here" id="floatingTextarea2" style="height: 100px">
+                {{product.description}}
+              </textarea>
+
+            </div>
+          </td>
+          <td>
+            {{product.rating}}
+          </td>
+          <td>{{product.city}}</td>
+          <td>{{product.region}}</td>
+          <!-- <td>{{seller.products.length}}</td> -->
+          <td>
+              <button type="button" class="btn btn-sm btn-outline-secondary" (click)="editProductModal(product)" data-bs-toggle="modal" data-bs-target="#updateProductModal" >Edit</button>
+              <button type="button" class="btn btn-sm btn-outline-secondary" (click)="deleteProductModal(product)" data-bs-toggle="modal" data-bs-target="#deleteProductModal">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+
+<!-- Edit Seller Modal -->
+<div class="modal fade" id="updateSellerModal" tabindex="-1" role="dialog" aria-labelledby="userSellerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+     <div class="modal-content">
+        <div class="modal-header">
+           <h5 class="modal-title" id="updateSellerModalLabel">Редактировать пользователя: {{seller?.username}}</h5>
+           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+        </div>
+        <div class="modal-body">
+           <form #sellerEditForm="ngForm">
+
+              <input type="hidden" ngModel="{{seller?.username}}" name="username" class="form-control" id="username" placeholder="Username">
+
+              <input type="hidden" ngModel="{{seller?.id}}" name="id" class="form-control" id="id">
+              <input type="hidden" ngModel="{{seller?.password}}" name="password" class="form-control" id="password" >
+              <!-- <input type="hidden" ngModel="{{editSeller?.products}}" name="products" class="form-control" id="products" > -->
+
+
+              <input type="hidden" ngModel="{{seller?.inn}}" name="inn" class="form-control" id="inn" name="inn" placeholder="1234567890">
+              <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" ngModel="{{seller?.name}}" name="name" class="form-control" id="name" placeholder="Name">
+             </div>
+             <div class="form-group">
+              <label for="description">Description</label>
+              <div class="form-floating">
+                <textarea class="form-control" type="text" ngModel="{{seller?.description}}" name="description" id="description" placeholder="Leave a description here" id="floatingTextarea2" style="height: 100px">
+                </textarea>
+                <label for="floatingTextarea2">Description</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="contactInfo">Контактная информация</label>
+              <div class="form-floating">
+                <textarea class="form-control" type="text" ngModel="{{seller?.contactInfo}}" name="contactInfo" id="conactInfo" placeholder="Leave a contact info here" id="floatingTextarea2" style="height: 100px">
+                </textarea>
+                <label for="floatingTextarea2">Contact info</label>
+              </div>
+            </div>
+
+              <div class="modal-footer">
+                 <button type="button" id="edit-product-form" data-bs-dismiss="modal" class="btn btn-secondary" >Закрыть</button>
+                 <button (click)="onUpdateSeller(sellerEditForm.value)" data-bs-dismiss="modal" class="btn btn-primary" >Сохранить</button>
+              </div>
+           </form>
+        </div>
+     </div>
+  </div>
+</div>
+
+<!--Change password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+     <div class="modal-content">
+        <div class="modal-header">
+           <h5 class="modal-title" id="changePasswordModalLabel">Изменить пароль: {{seller?.username}}</h5>
+           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+        </div>
+        <div class="modal-body">
+           <form #changePasswordForm="ngForm">
+
+              <input type="hidden" ngModel="{{seller?.username}}" name="username" class="form-control" id="username" >
+
+              <div class="form-group">
+                <label for="oldPassword">Старый пароль</label>
+                <input type="password" ngModel name="oldPassword" class="form-control" id="oldPassword" >
+              </div>
+
+              <div class="form-group">
+                 <label for="newPassword">Новый пароль</label>
+                 <input type="password" ngModel name="newPassword" class="form-control" id="newPassword" >
+              </div>
+
+              <div class="form-group">
+                 <label for="reNewPassword">Новый пароль еще раз</label>
+                 <input type="password" ngModel name="reNewPassword" class="form-control" id="reNewPassword" name="reNewPassword" >
+              </div>
+              <div class="modal-footer">
+                 <button type="button" id="edit-product-form" data-bs-dismiss="modal" class="btn btn-secondary" >Закрыть</button>
+                 <button (click)="getNewPassword(changePasswordForm.value)" data-bs-dismiss="modal" class="btn btn-primary" >Сохранить</button>
+              </div>
+           </form>
+        </div>
+     </div>
+  </div>
+</div>
+
+<!-- Add Modal -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addProductModalLabel">Добавить продукт</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form #addForm="ngForm" (ngSubmit)="onAddProduct(addForm)">
+          <div class="form-group">
+            <label for="name">Название</label>
+            <input type="text" ngModel name="name" class="form-control" id="name" placeholder="Название" required>
+         </div>
+         <div class="form-group">
+            <label for="price">Цена</label>
+            <input type="number" ngModel name="price" class="form-control" id="price" placeholder="Цена" required>
+         </div>
+         <div class="form-group">
+            <label for="count">Количество</label>
+            <input type="number" ngModel name="count" class="form-control" id="count" placeholder="Кол-во" required>
+         </div>
+         <div class="form-group">
+            <label for="imgUrl">URL изображения</label>
+            <input type="text" ngModel name="imgUrl" class="form-control" id="imgUrl" placeholder="URL изображения" required>
+          </div>
+         <div class="form-group">
+            <label for="description">Описание товара</label>
+            <textarea type="text" ngModel name="description" class="form-control" id="description" cols="30" raws="10" placeholder="Описание" required>
+            </textarea>
+         </div>
+         <!-- <div class="form-group">
+          <label for="seller">Seller id</label> -->
+          <input type="hidden" ngModel={{this.seller.id}} name="seller" class="form-control" id="seller"  required>
+        <!-- </div> -->
+        <div class="form-group">
+          <label for="city">Город</label>
+          <input type="string" ngModel name="city" class="form-control" id="city" placeholder="Город" required>
+        </div>
+
+        <div class="form-group">
+          <label for="region">Регион</label>
+          <input type="string" ngModel name="region" class="form-control" id="region" placeholder="Регион" required>
+        </div>
+
+
+         <div class="modal-footer">
+            <button type="button" id="add-product-form" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary" >Добавить</button>
+         </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Edit Modal -->
+<div class="modal fade" id="updateProductModal" tabindex="-1" role="dialog" aria-labelledby="productEditModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+     <div class="modal-content">
+        <div class="modal-header">
+           <h5 class="modal-title" id="updateProductModalLabel">Изменить товар {{editProduct?.name}}</h5>
+           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+        </div>
+        <div class="modal-body">
+           <form #editForm="ngForm">
+              <div class="form-group">
+                 <label for="name">Название</label>
+                 <input type="text" ngModel="{{editProduct?.name}}" name="name" class="form-control" id="name" aria-describedby="emailHelp" placeholder="Name">
+              </div>
+              <input type="hidden" ngModel="{{editProduct?.id}}" name="id" class="form-control" id="id" placeholder="Email">
+              <div class="form-group">
+                <label for="price">Цена</label>
+                <input type="number" ngModel="{{editProduct?.price}}" name="price" class="form-control" id="price" placeholder="Price">
+              </div>
+
+              <div class="form-group">
+                 <label for="count">Количество</label>
+                 <input type="number" ngModel="{{editProduct?.count}}" name="count" class="form-control" id="count" placeholder="Count">
+              </div>
+
+              <div class="form-group">
+                 <label for="imgUrl">URL изображения</label>
+                 <input type="text" ngModel="{{editProduct?.imgUrl}}" name="imgUrl" class="form-control" id="imgUrl" name="imgUrl" placeholder="imgUrl">
+              </div>
+              <div class="form-group">
+                <label for="description">Описание</label>
+                <textarea type="text" ngModel={{editProduct?.description}} name="description" class="form-control" id="description" cols="30" raws="10" placeholder="Description" required>
+
+                </textarea>
+
+             </div>
+             <!-- <div class="form-group"> -->
+              <!-- <label for="seller">Seller id</label> -->
+              <input type="hidden" ngModel={{editProduct?.seller?.id}} name="seller" class="form-control" id="seller" placeholder="Seller_id" required>
+            <!-- </div> -->
+            <div class="form-group">
+              <label for="city">Город</label>
+              <input type="string" ngModel={{editProduct?.city}} name="city" class="form-control" id="city" placeholder="City" required>
+            </div>
+
+            <div class="form-group">
+              <label for="region">Регион</label>
+              <input type="string" ngModel={{editProduct?.region}} name="region" class="form-control" id="region" placeholder="region" required>
+            </div>
+
+              <div class="modal-footer">
+                 <button type="button" id="edit-product-form" data-bs-dismiss="modal" class="btn btn-secondary" >Закрыть</button>
+                 <button (click)="onUpdateProduct(editForm.value)" data-bs-dismiss="modal" class="btn btn-primary" >Сохранить изменения</button>
+              </div>
+           </form>
+        </div>
+     </div>
+  </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteProductModal" tabindex="-1" role="dialog" aria-labelledby="productDeleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+     <div class="modal-content">
+        <div class="modal-header">
+           <h5 class="modal-title" id="deleteProductModalLabel">Удалить товар {{deleteProduct?.name}}</h5>
+           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+         <div class="modal-body">
+            <p>Вы уверены, что хотите удалить товар {{deleteProduct?.name}}?</p>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
+               <button (click)="onDeleteProduct(deleteProduct.id)" class="btn btn-danger" data-bs-dismiss="modal">Да</button>
+            </div>
+         </div>
+        </div>
+     </div>
+  </div>

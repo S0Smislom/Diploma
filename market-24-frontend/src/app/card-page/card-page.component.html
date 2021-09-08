@@ -1,0 +1,136 @@
+<div class="container">
+  <div class="row ">
+    <!-- <img src="{{this.product.imgUrl}}" alt="" class="img rounded col-xl-5 col-md-5 col-sm-12"> -->
+    <div class="img_container col-5" style="background-image: url('{{this.product?.imgUrl}}'); background-size: cover;"></div>
+    <div class="content col-xl-5 col-md-5 col-sm-12">
+      <div class="content_inner">
+        <h3 class="title">
+          {{this.product!.name}}
+        </h3>
+        <br>
+        <h3 class="price">
+          От {{this.product!.price}} Р
+        </h3>
+        <h5 class="rating">Оценка: {{this.product!.rating}}</h5>
+        <br>
+        <h6 class="count">
+          В наличии:     {{this.product!.count}}
+        </h6>
+
+        <h6 class="description">
+          Описание:
+      </h6>
+      <p class="description_text" >
+        {{this.product!.description}}
+      </p>
+        <h6 class="city">
+          Город:
+
+        </h6>
+        {{this.product!.city}} | {{this.product!.region}}
+
+        <h6 class="seller">
+          Выложил:  </h6>
+          {{this.product!.seller!.name}}
+          <button class="btn btn_seller" data-bs-toggle="modal" data-bs-target="#sellerInfoModal">Подробнее</button>
+
+
+      </div>
+
+      <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#orderModal">Заказать</button>
+      <button class="btn-success" (click)="this.likeProduct(this.product!.id)">Добавить в избранное</button>
+    </div>
+
+
+  </div>
+<div class="comments">
+  <h4 class="comment_title">
+    Отзывы ({{this.comments.length}}):
+  </h4>
+  <div class="comment" *ngFor="let comment of comments; index as i; first as isFirst">
+    <h5 class="user">Пользователь: {{comment.user.name}} {{comment.user.surname}}</h5>
+    <h6 class="rate"> Оценка: {{comment.rate}}</h6>
+    <p class="comment_text">
+      {{comment.text}}
+    </p>
+    <button class="btn btn-danger" *ngIf="roleAdmin()" (click)="onDeleteComment(comment)"> Удалить</button>
+  </div>
+
+</div>
+<div class="feedback comments" *ngIf="roleUser()">
+  <h4 class="feedback_text">
+    Оставить отзыв:
+  </h4>
+  <!-- <textarea name="comment" id="" class="form-control"></textarea>
+  <br>
+  <button class="btn btn-success">Отправить</button> -->
+  <form #addForm="ngForm" (ngSubmit)="onAddComment(addForm)">
+
+    <input type="hidden" ngModel="{{this.product!.id}}" name="productID" class="form-control" id="productID">
+    <input type="hidden" ngModel="{{this.getUserId()}}" name="userID" class="form-control" id="userID" >
+
+    <div class="form-group">
+      <label for="rate">Оценка</label>
+      <input type="number" ngModel name="rate" class="form-control" id="rate" min=1 max=5 placeholder="От 1 до 5" style="width: 150px;">
+    </div>
+    <div class="form-group">
+      <label for="text">Текст</label>
+      <!-- <input type="text" ngModel name="text" class="form-control" id="text" placeholder="Текст"> -->
+      <textarea class="form-control" type="text" ngModel name="text" id="text" placeholder="Оставте здесь свой комментарий" id="floatingTextarea2" style="height: 100px">
+      </textarea>
+    </div>
+
+
+    <div class="modal-footer">
+      <!-- <button type="button" id="add-product-form" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
+      <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary" >Отправить</button>
+   </div>
+  </form>
+</div>
+</div>
+
+
+<!-- Seller info -->
+<div class="modal fade" id="sellerInfoModal" tabindex="-1" aria-labelledby="sellerInfoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="sellerInfoModalLabel">Информация о продавце</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group list-group-flush">
+          <!-- <li class="list-group-item">Логин*: {{this.product.seller.username}}</li> -->
+          <li class="list-group-item">Название компании: {{this.product!.seller!.name}}</li>
+          <!-- <li class="list-group-item">ИНН*: {{seller.inn}}</li> -->
+          <li class="list-group-item" >Описание компании: {{this.product!.seller!.description}}</li>
+          <!-- <li class="list-group-item">Контактная информация: {{seller.contactInfo}}</li> -->
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Order info -->
+<div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="orderModalLabel">Контактная информация</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="orderInfo" *ngIf="!this.logedIn()">
+          <h5>{{this.product.seller.contactInfo}}</h5>
+        </div>
+        <div class="loginInfo" *ngIf="this.logedIn()">
+          Вам необходимо войти в аккаунт
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
